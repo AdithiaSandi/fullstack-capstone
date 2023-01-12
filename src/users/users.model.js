@@ -82,6 +82,15 @@ export const getUserbyUsername = async (un) => {
   return allUser;
 };
 
+
+export const updateUser = async (id, obj) => {
+    await Users.update(obj, {
+        where: {
+            id: id,
+        },
+    });
+};
+
 export const deleteUser = async (id) => {
   await Users.destroy({
     where: {
@@ -89,13 +98,4 @@ export const deleteUser = async (id) => {
     },
   });
 };
-
-export const updateUser = async (id, obj) => {
-  await Users.update(obj, {
-    where: {
-      id: id,
-    },
-  });
-};
-
 export default Users;
