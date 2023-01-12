@@ -64,11 +64,21 @@ export const getAddressbyUserId = async (id) => {
   return allAddresses;
 };
 
+export const getMainAddress = async (id) => {
+  const mainAddress = await Address.findOne({
+    where: {
+      userID: id,
+      status: "utama",
+    },
+  });
+  return mainAddress;
+};
+
 export const updateAddress = async (userID, id, obj) => {
   await Address.update(obj, {
     where: {
       id: id,
-      userID: userID
+      userID: userID,
     },
   });
 };
@@ -77,7 +87,9 @@ export const deleteAddress = async (userID, id) => {
   await Address.destroy({
     where: {
       id: id,
-      userID: userID
+      userID: userID,
     },
   });
 };
+
+export default Address;
