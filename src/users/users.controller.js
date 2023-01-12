@@ -1,4 +1,4 @@
-import { createUser, getUserbyId, getUserbyUsername } from "./users.model.js";
+import { createUser, getUserbyId, getUserbyUsername, deleteUser, updateUser } from "./users.model.js";
 import JSONtoken from "jsonwebtoken";
 
 export const userCreateRest = async (req, res) => {
@@ -74,9 +74,46 @@ export const userGetByIDRest = async (req, res) => {
   return res.status(200).json({
     meta: {
       code: 200,
-      message: "Success add user",
+      message: "Success get user " + respModel.username,
     },
     data: respModel,
     decode: decode,
   });
 };
+
+export const userDelete = async (req,res) => {
+  const jwt = req.headers["authorization"];
+  const bearer = jwt.split(" ");
+  const token = bearer[1];
+  const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
+  const id = decode.id;
+  
+  const respModel = await deleteUser(id)
+  return res.status(200).json({
+    meta: {
+      code: 200,
+      message: "Success delete user",
+    },
+    data: respModel,
+    decode: decode,
+  });
+}
+
+export const userUpdate = async (req,res) => {
+  const jwt = req.headers["authorization"];
+  const bearer = jwt.split(" ");
+  const token = bearer[1];
+  const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
+  const id = decode.id;
+  const data = req.body
+
+  const respModel = await updateUser(id,data)
+  return res.status(200).json({
+    meta: {
+      code: 200,
+      message: "Success update user",
+    },
+    data: respModel,
+    decode: decode,
+  });
+}

@@ -17,7 +17,7 @@ export const authLogin = (async (req, res) => {
 
     const user = await getUserbyUsername(username)
 
-    if (!user) {
+    if (!user || user.deletedAt !== null) {
         return res.status(404)
             .json({
                 meta: { 
