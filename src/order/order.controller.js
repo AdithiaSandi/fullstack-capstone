@@ -1,4 +1,3 @@
-import { getMainAddress } from "../address/address.model.js";
 import JSONtoken from "jsonwebtoken";
 import { getUserbyId } from "../users/users.model.js";
 import { createOrder, deleteOrders, getOrdersbyUserId, updateOrders } from "./order.model.js";
@@ -20,11 +19,10 @@ export const ordersAdd = async (req, res) => {
   const token = bearer[1];
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
 
-  const alamatID = await getMainAddress(decode.id);
+  
 
   const respModel = await createOrder(
     decode.id,
-    alamatID.id,
     type,
     status,
     total

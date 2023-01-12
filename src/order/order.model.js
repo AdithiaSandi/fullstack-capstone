@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { newSeq } from "../configs/database.js";
 import Users from "../users/users.model.js";
 import Addresses from "../address/address.model.js";
+import { getMainAddress } from "../address/address.model.js";
 
 const Orders = newSeq.define(
   "orders",
@@ -44,10 +45,11 @@ newSeq
     console.error("Unable to create table : ", error);
   });
 
-export const createOrder = async (userID, alamatID, ty, sta, tot) => {
+export const createOrder = async (userID, ty, sta, tot) => {
+  const addressID = await getMainAddress(userID);
   const create = await Orders.create({
     userID: userID,
-    alamatID: alamatID,
+    addressID: addressID.id,
     type: ty,
     status: sta,
     total: tot,
@@ -65,13 +67,13 @@ export const getOrdersbyUserId = async (id) => {
   return allOrders;
 };
 
-export const updateOrders = async (id,obj) => {
-    await Orders.update(obj,{
-        where: {
-            id: id
-        }
-    })
-}
+export const updateOrders = async (id, obj) => {
+  await Orders.update(obj, {
+    where: {
+      id: id,
+    },
+  });
+};
 
 export const deleteOrders = async (id) => {
   await Orders.destroy({
