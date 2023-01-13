@@ -39,13 +39,13 @@ const Orders = newSeq.define(
 newSeq
   .sync()
   .then(() => {
-    console.log("Address table created successfully!");
+    console.log("Orders table created successfully!");
   })
   .catch((error) => {
     console.error("Unable to create table : ", error);
   });
 
-export const createOrder = async (userID, ty, sta, tot) => {
+export const createOrder = async (userID, ty, sta, tot, arrItems) => {
   const addressID = await getMainAddress(userID);
   const create = await Orders.create({
     userID: userID,
@@ -55,6 +55,7 @@ export const createOrder = async (userID, ty, sta, tot) => {
     total: tot,
   });
   console.log("order's id is:", create.id);
+
   return create;
 };
 
@@ -68,19 +69,21 @@ export const getOrdersbyUserId = async (id) => {
 };
 
 export const updateOrders = async (id, obj) => {
-  await Orders.update(obj, {
+  const update = await Orders.update(obj, {
     where: {
       id: id,
     },
   });
+  return update;
 };
 
 export const deleteOrders = async (id) => {
-  await Orders.destroy({
+  const deleted = await Orders.destroy({
     where: {
       id: id,
     },
   });
+  return deleted;
 };
 
 export default Orders;
