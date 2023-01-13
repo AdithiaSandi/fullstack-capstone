@@ -5,6 +5,7 @@ import authRoute from "./auth/auth.routes.js";
 import addressRoute from "./address/address.routes.js";
 import orderRoute from "./order/order.routes.js";
 import categoriesRoute from "./categories/categories.routes.js";
+import itemsRoute from "./order-items/orderitems.routes.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use("/api/v1", authRoute);
 app.use("/api/v1", addressRoute);
 app.use("/api/v1", orderRoute);
 app.use("/api/v1", categoriesRoute);
+app.use("/api/v1", itemsRoute);
 
 // start server
 app.listen(process.env.API_PORT, () => {
