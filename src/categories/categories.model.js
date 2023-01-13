@@ -26,7 +26,7 @@ const Categories = newSeq.define(
 newSeq
   .sync()
   .then(() => {
-    console.log("Address table created successfully!");
+    console.log("Categories table created successfully!");
   })
   .catch((error) => {
     console.error("Unable to create table : ", error);
