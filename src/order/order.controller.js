@@ -6,11 +6,12 @@ import {
   getOrdersbyUserId,
   updateOrders,
 } from "./order.model.js";
+import { createItems } from "../order-items/orderitems.model.js";
 
 export const ordersAdd = async (req, res) => {
-  const { type, status, total } = req.body;
+  const { type, status, total, items } = req.body;
 
-  if (!(type && status && total)) {
+  if (!(type && status && items)) {
     return res.status(400).json({
       meta: {
         code: 400,
@@ -24,7 +25,13 @@ export const ordersAdd = async (req, res) => {
   const token = bearer[1];
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
 
-  const respModel = await createOrder(decode.id, type, status, total);
+  const respModel = await createOrder(decode.id, type, status, total, items);
+
+  const load = [];
+  for (const item of items) {
+    const entry = await createItems(respModel.id, item);
+    load.push(entry);
+  }
 
   return res.status(200).json({
     meta: {
@@ -32,7 +39,8 @@ export const ordersAdd = async (req, res) => {
       message: "success add order",
     },
     data: {
-      id: respModel,
+      order_detail: respModel,
+      item: load,
     },
   });
 };
