@@ -45,7 +45,7 @@ newSeq
     console.error("Unable to create table : ", error);
   });
 
-export const createOrder = async (userID, ty, sta, tot, arrItems) => {
+export const createOrder = async (userID, ty, sta, tot) => {
   const addressID = await getMainAddress(userID);
   const create = await Orders.create({
     userID: userID,
