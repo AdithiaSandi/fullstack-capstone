@@ -7,6 +7,7 @@ import {
   updateOrders,
 } from "./order.model.js";
 import { createItems } from "../order-items/orderitems.model.js";
+import axios from "axios";
 
 export const ordersAdd = async (req, res) => {
   const { type, status, total, items } = req.body;
@@ -96,5 +97,41 @@ export const ordersDelete = async (req, res) => {
       message: "Success delete order",
     },
     data: respModel,
+  });
+};
+
+export const ordersDistance = async (req, res) => {
+  const destination = req.body.destination;
+  const key = process.env.API_KEY;
+
+  var distance;
+
+  var config = {
+    method: "get",
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?origins=Bekasi&destinations=${destination}&key=${key}`,
+    headers: {},
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      distance = response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  let text = "";
+  if (distance.rows[0].elements[0].distance.value > 15000) {
+    text = "distance too far( > 5 km )";
+  } else {
+    text = "sucess get distance";
+  }
+  return res.status(200).json({
+    meta: {
+      code: 200,
+      message: text,
+    },
+    data: distance.rows[0].elements[0].distance.text,
   });
 };
