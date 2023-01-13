@@ -1,6 +1,11 @@
 import JSONtoken from "jsonwebtoken";
 import { getUserbyId } from "../users/users.model.js";
-import { createOrder, deleteOrders, getOrdersbyUserId, updateOrders } from "./order.model.js";
+import {
+  createOrder,
+  deleteOrders,
+  getOrdersbyUserId,
+  updateOrders,
+} from "./order.model.js";
 
 export const ordersAdd = async (req, res) => {
   const { type, status, total } = req.body;
@@ -19,14 +24,7 @@ export const ordersAdd = async (req, res) => {
   const token = bearer[1];
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
 
-  
-
-  const respModel = await createOrder(
-    decode.id,
-    type,
-    status,
-    total
-  );
+  const respModel = await createOrder(decode.id, type, status, total);
 
   return res.status(200).json({
     meta: {
@@ -66,17 +64,18 @@ export const ordersUpdate = async (req, res) => {
   const id = req.body.id;
   const data = req.body.data;
 
-  const respModel = await updateOrders( id, data );
+  const respModel = await updateOrders(id, data);
   return res.status(200).json({
     meta: {
-        code: 200,
-        message: "success update order"
+      code: 200,
+      message: "success update order",
     },
     data: {
-        order_id: id,
-        payload: data
-    }
-  })
+      order_id: id,
+      payload: data,
+    },
+    payload: respModel,
+  });
 };
 
 export const ordersDelete = async (req, res) => {
@@ -88,6 +87,6 @@ export const ordersDelete = async (req, res) => {
       code: 200,
       message: "Success delete order",
     },
-    data: respModel
+    data: respModel,
   });
 };
