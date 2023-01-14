@@ -116,6 +116,11 @@ export const ordersDelete = async (req, res) => {
   });
 };
 
+
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// 3RD PARTY INTEGRATION /////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
 export const ordersDistance = async (req, res) => {
   const destination = req.body.destination;
   const key = process.env.API_KEY;
@@ -153,6 +158,10 @@ export const ordersDistance = async (req, res) => {
       code: 200,
       message: text,
     },
-    data: distance.rows[0].elements[0].distance.text,
+    data: {
+      origin: origin,
+      destination: destination,
+      distance: distance.rows[0].elements[0].distance.text,
+    },
   });
 };
