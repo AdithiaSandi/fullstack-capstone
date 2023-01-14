@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { newSeq } from "../configs/database.js";
 import Users from "../users/users.model.js";
-import Addresses from "../address/address.model.js";
+import Address from "../address/address.model.js";
 import { getMainAddress } from "../address/address.model.js";
 
 const Orders = newSeq.define(
@@ -17,7 +17,7 @@ const Orders = newSeq.define(
     addressID: {
       type: DataTypes.INTEGER,
       references: {
-        model: Addresses,
+        model: Address,
         key: "id",
       },
     },
@@ -60,12 +60,48 @@ export const createOrder = async (userID, ty, sta, tot) => {
 };
 
 export const getOrdersbyUserId = async (id) => {
-  const allOrders = await Orders.findAll({
+  const allOrders = await Orders.findOne({
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "deletedAt"],
+    },
     where: {
       userID: id,
     },
   });
   return allOrders;
+};
+
+export const getOrdersbyId = async (id) => {
+  const order = await Orders.findOne({
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "deletedAt"],
+    },
+    where: {
+      id: id,
+    },
+  });
+
+  const user = await Users.findOne({
+    attributes: ["username", "phone"],
+    where: {
+      id: order.dataValues.userID,
+    },
+  });
+
+  const address = await Address.findOne({
+    attributes: ["province", "city", "district"],
+    where: {
+      id: order.dataValues.addressID,
+    },
+  });
+
+  const orderDetail = {
+    order: order,
+    user: user,
+    address: address,
+  };
+
+  return orderDetail;
 };
 
 export const updateOrders = async (id, obj) => {

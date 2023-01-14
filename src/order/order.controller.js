@@ -3,6 +3,7 @@ import { getUserbyId } from "../users/users.model.js";
 import {
   createOrder,
   deleteOrders,
+  getOrdersbyId,
   getOrdersbyUserId,
   updateOrders,
 } from "./order.model.js";
@@ -46,7 +47,7 @@ export const ordersAdd = async (req, res) => {
   });
 };
 
-export const ordersGet = async (req, res) => {
+export const ordersGetAll = async (req, res) => {
   const jwt = req.headers["authorization"];
   const bearer = jwt.split(" ");
   const token = bearer[1];
@@ -66,6 +67,20 @@ export const ordersGet = async (req, res) => {
     },
     data: respModel,
     decode: decode,
+  });
+};
+
+export const ordersGet = async (req, res) => {
+  const id = req.body.id;
+
+  const respModel = await getOrdersbyId(id);
+
+  return res.status(200).json({
+    meta: {
+      code: 200,
+      message: "success get order : " + id,
+    },
+    data: respModel,
   });
 };
 
@@ -103,12 +118,13 @@ export const ordersDelete = async (req, res) => {
 export const ordersDistance = async (req, res) => {
   const destination = req.body.destination;
   const key = process.env.API_KEY;
+  const origin = "Setiamekar";
 
   var distance;
 
   var config = {
     method: "get",
-    url: `https://maps.googleapis.com/maps/api/distancematrix/json?origins=Bekasi&destinations=${destination}&key=${key}`,
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${key}`,
     headers: {},
   };
 
