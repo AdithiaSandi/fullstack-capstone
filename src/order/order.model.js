@@ -1,8 +1,7 @@
 import { DataTypes } from "sequelize";
 import { newSeq } from "../configs/database.js";
 import Users from "../users/users.model.js";
-import Address from "../address/address.model.js";
-import { getMainAddress } from "../address/address.model.js";
+import Address, { getMainAddress } from "../address/address.model.js";
 
 const Orders = newSeq.define(
   "orders",
@@ -120,6 +119,21 @@ export const deleteOrders = async (id) => {
     },
   });
   return deleted;
+};
+
+export const getOrdersDistance = async (id) => {
+  const order = await Orders.findOne({
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "deletedAt"],
+    },
+    where: {
+      id: id,
+    },
+  });
+
+  const address = await getMainAddress(order.userID);
+
+  return address;
 };
 
 export default Orders;

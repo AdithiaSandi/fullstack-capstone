@@ -5,6 +5,7 @@ import {
   deleteOrders,
   getOrdersbyId,
   getOrdersbyUserId,
+  getOrdersDistance,
   updateOrders,
 } from "./order.model.js";
 import { createItems } from "../order-items/orderitems.model.js";
@@ -118,7 +119,11 @@ export const ordersDelete = async (req, res) => {
 export const ordersDistance = async (req, res) => {
   const destination = req.body.destination;
   const key = process.env.API_KEY;
-  const origin = "Setiamekar";
+  const id = req.body.id;
+
+  const address = await getOrdersDistance(id);
+
+  const origin = address.district;
 
   var distance;
 
