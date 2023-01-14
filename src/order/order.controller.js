@@ -144,7 +144,7 @@ export const ordersDistance = async (req, res) => {
 
   let text = "";
   if (distance.rows[0].elements[0].distance.value > 15000) {
-    text = "distance too far( > 5 km )";
+    text = "distance too far( > 15 km )";
   } else {
     text = "sucess get distance";
   }
