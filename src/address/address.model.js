@@ -75,12 +75,28 @@ export const getMainAddress = async (id) => {
 };
 
 export const updateAddress = async (userID, id, obj) => {
-  await Address.update(obj, {
+  const address = await getAddressbyUserId(userID);
+  if (obj.status) {
+    if (obj.status == "utama") {
+      for (const data of address) {
+        await Address.update(
+          { status: "cadangan" },
+          {
+            where: {
+              id: data.id,
+            },
+          }
+        );
+      }
+    }
+  }
+  const update = await Address.update(obj, {
     where: {
       id: id,
       userID: userID,
     },
   });
+  return update;
 };
 
 export const deleteAddress = async (userID, id) => {
