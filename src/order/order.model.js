@@ -58,13 +58,13 @@ export const createOrder = async (userID, ty, sta, tot) => {
   return create;
 };
 
-export const getOrdersbyUserId = async (id) => {
+export const getOrdersbyUserId = async (userID) => {
   const allOrders = await Orders.findOne({
     attributes: {
       exclude: ["createdAt", "updatedAt", "deletedAt"],
     },
     where: {
-      userID: id,
+      userID: userID,
     },
   });
   return allOrders;
