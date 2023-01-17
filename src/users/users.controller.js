@@ -1,22 +1,23 @@
-import { createUser, getUserbyId, getUserbyUsername, deleteUser, updateUser } from "./users.model.js";
+import {
+  createUser,
+  getUserbyId,
+  getUserbyUsername,
+  deleteUser,
+  updateUser,
+} from "./users.model.js";
 import JSONtoken from "jsonwebtoken";
 
 export const userCreateRest = async (req, res) => {
-  const {
-    username,
-    password,
-    address,
-    day_of_birth,
-    phone,
-    gender,
-    education,
-  } = req.body;
+  const { username, password, address, dob, phone, gender, education } =
+    req.body;
 
-  if (!(username && password && gender && education)) {
+  if (
+    !(username && password && address && dob && phone && gender && education)
+  ) {
     return res.status(400).json({
       meta: {
         code: 400,
-        message: "Some input are required",
+        message: "Missing required input",
       },
       data: {},
     });
@@ -59,16 +60,15 @@ export const userGetByIDRest = async (req, res) => {
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
   const id = decode.id;
 
-  // if  (!(id)) {
-  //     return res.status(400)
-  //         .json({
-  //             meta: {
-  //                 code: 400,
-  //                 message: "Some input are required"
-  //             },
-  //             data: {}
-  //         })
-  // }
+  if (!id) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        message: "Some input are required",
+      },
+      data: {},
+    });
+  }
 
   const respModel = await getUserbyId(id);
   return res.status(200).json({
@@ -81,14 +81,15 @@ export const userGetByIDRest = async (req, res) => {
   });
 };
 
-export const userDelete = async (req,res) => {
+export const userDelete = async (req, res) => {
   const jwt = req.headers["authorization"];
   const bearer = jwt.split(" ");
   const token = bearer[1];
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
   const id = decode.id;
-  
-  const respModel = await deleteUser(id)
+
+  const respModel = await deleteUser(id);
+
   return res.status(200).json({
     meta: {
       code: 200,
@@ -97,17 +98,28 @@ export const userDelete = async (req,res) => {
     data: respModel,
     decode: decode,
   });
-}
+};
 
-export const userUpdate = async (req,res) => {
+export const userUpdate = async (req, res) => {
   const jwt = req.headers["authorization"];
   const bearer = jwt.split(" ");
   const token = bearer[1];
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
   const id = decode.id;
-  const data = req.body
+  const data = req.body;
 
-  const respModel = await updateUser(id,data)
+  const respModel = await updateUser(id, data);
+
+  if (respModel.error) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        message: "Failed update user",
+      },
+      data: respModel,
+    });
+  }
+
   return res.status(200).json({
     meta: {
       code: 200,
@@ -116,4 +128,4 @@ export const userUpdate = async (req,res) => {
     data: respModel,
     decode: decode,
   });
-}
+};
