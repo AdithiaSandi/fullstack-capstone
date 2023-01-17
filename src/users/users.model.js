@@ -102,7 +102,7 @@ export const updateUser = async (id, obj) => {
       }
     }
     return {
-      error: "column " + item + " didn't exist",
+      error: "column '" + item + "' doesn't exist",
     };
   }
 
