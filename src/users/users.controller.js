@@ -108,6 +108,15 @@ export const userUpdate = async (req, res) => {
   const id = decode.id;
   const data = req.body;
 
+  if (Object.keys(data).length === 0) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        message: "Missing data",
+      },
+    });
+  }
+
   const respModel = await updateUser(id, data);
 
   if (respModel.error) {
