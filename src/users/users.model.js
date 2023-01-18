@@ -52,7 +52,7 @@ export const createUser = async (un, pw, em, ph) => {
 };
 
 export const getUserbyId = async (id) => {
-  const allUser = await Users.findOne({
+  const user = await Users.findOne({
     attributes: {
       exclude: ["password", "createdAt", "updatedAt", "deletedAt"],
     },
@@ -60,7 +60,7 @@ export const getUserbyId = async (id) => {
       id: id,
     },
   });
-  return allUser;
+  return user;
 };
 
 export const getUserbyUsername = async (un) => {
