@@ -76,7 +76,7 @@ export const ordersGetAll = async (req, res) => {
   return res.status(200).json({
     meta: {
       code: 200,
-      message: "Success get orders of user : " + username,
+      message: "Success get orders of user : " + username.dataValues.username,
     },
     data: respModel,
     decode: decode,
@@ -96,8 +96,52 @@ export const ordersGet = async (req, res) => {
     });
   }
 
-  const respModel = await getOrdersbyId(id);
+  const destination = req.body.destination;
+  const key = process.env.API_KEY;
 
+  if (!destination) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "no destination",
+      },
+    });
+  }
+
+  const address = await getOrdersDistance(id);
+
+  const origin = address.district;
+
+  var distance;
+
+  var config = {
+    method: "get",
+    url: `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${key}`,
+    headers: {},
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      distance = response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+  let text = "";
+  if (distance.rows[0].elements[0].distance.value > 15000) {
+    text = "distance too far( > 15 km )";
+  } else {
+    text = "sucess get distance";
+  }
+
+  const respModel = await getOrdersbyId(id);
+  respModel.distance = {
+    origin: origin,
+    destination: destination,
+    distance: distance.rows[0].elements[0].distance.text,
+  };
   return res.status(200).json({
     meta: {
       code: 200,
@@ -110,6 +154,51 @@ export const ordersGet = async (req, res) => {
 export const ordersUpdate = async (req, res) => {
   const id = req.body.id;
   const data = req.body.data;
+
+  if (!(id && data && Object.keys(data).length > 0)) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "missing element(s) or value(s)",
+      },
+    });
+  }
+
+  const exist = await getOrdersExist(id);
+  if (exist == null) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "order doesn't exist",
+      },
+    });
+  }
+
+  const column = Object.keys(exist.dataValues);
+  const elements = Object.keys(data);
+  existence: for (const item of elements) {
+    for (const col of column) {
+      if (item == col) {
+        if (typeof item == typeof col) {
+          console.log(item + " exist");
+          continue existence;
+        } else {
+          return res.status(400).json({
+            meta: {
+              code: 400,
+              error: "wrong data type of : " + item,
+            },
+          });
+        }
+      }
+    }
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "column '" + item + "' doesn't exist",
+      },
+    });
+  }
 
   const respModel = await updateOrders(id, data);
   return res.status(200).json({
@@ -153,9 +242,9 @@ export const ordersDelete = async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////
 
 export const ordersDistance = async (req, res) => {
+  const id = req.body.id;
   const destination = req.body.destination;
   const key = process.env.API_KEY;
-  const id = req.body.id;
 
   const address = await getOrdersDistance(id);
 
