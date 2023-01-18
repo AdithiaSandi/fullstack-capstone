@@ -2,6 +2,7 @@ import {
   createCategories,
   deleteCategories,
   getCategories,
+  getCategoriesById,
   updateCategories,
 } from "./categories.model.js";
 
@@ -12,7 +13,7 @@ export const categoriesAdd = async (req, res) => {
     return res.status(400).json({
       meta: {
         code: 400,
-        message: "missing input",
+        message: "missing input(s) or element(s)",
       },
     });
   }
@@ -50,11 +51,30 @@ export const categoriesUpdate = async (req, res) => {
   const id = req.body.id;
   const data = req.body.data;
 
+  if (!(id && data && Object.keys(data).length > 0)) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "missing element(s) or value(s)",
+      },
+    });
+  }
+
+  const exist = await getCategoriesById(id);
+  if (!exist) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "category doesn't exist",
+      },
+    });
+  }
+
   const respModel = await updateCategories(id, data);
   return res.status(200).json({
     meta: {
       code: 200,
-      message: "success update category",
+      message: "success update category ",
     },
     data: respModel,
   });
@@ -62,6 +82,16 @@ export const categoriesUpdate = async (req, res) => {
 
 export const categoriesDelete = async (req, res) => {
   const id = req.body.id;
+
+  const exist = await getCategoriesById(id);
+  if (!exist) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "category doesn't exist",
+      },
+    });
+  }
 
   const respModel = await deleteCategories(id);
 

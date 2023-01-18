@@ -48,6 +48,16 @@ export const getCategories = async () => {
   return allCategories;
 };
 
+export const getCategoriesById = async (id) => {
+  const exist = await Categories.findOne({
+    where: {
+      id: id,
+    },
+  });
+
+  return exist;
+};
+
 export const updateCategories = async (id, obj) => {
   const update = await Categories.update(obj, {
     where: {
