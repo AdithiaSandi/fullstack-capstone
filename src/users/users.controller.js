@@ -8,12 +8,9 @@ import {
 import JSONtoken from "jsonwebtoken";
 
 export const userCreateRest = async (req, res) => {
-  const { username, password, address, dob, phone, gender, education } =
-    req.body;
+  const { username, password, email, phone } = req.body;
 
-  if (
-    !(username && password && address && dob && phone && gender && education)
-  ) {
+  if (!(username && password && email && phone)) {
     return res.status(400).json({
       meta: {
         code: 400,
@@ -33,15 +30,7 @@ export const userCreateRest = async (req, res) => {
     });
   }
 
-  const respModel = await createUser(
-    username,
-    password,
-    day_of_birth,
-    address,
-    gender,
-    education,
-    phone
-  );
+  const respModel = await createUser(username, password, email, phone);
   return res.status(200).json({
     meta: {
       code: 200,
@@ -64,7 +53,7 @@ export const userGetByIDRest = async (req, res) => {
     return res.status(400).json({
       meta: {
         code: 400,
-        message: "Some input are required",
+        message: "Missing JWT",
       },
       data: {},
     });
