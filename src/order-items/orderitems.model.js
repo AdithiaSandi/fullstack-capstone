@@ -49,7 +49,6 @@ export const createItems = async (id, obj) => {
     weight: obj.weight,
     total: obj.total,
   });
-  console.log("item's id is:", create.dataValues);
   return create.dataValues;
 };
 
