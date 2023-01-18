@@ -74,6 +74,16 @@ export const getMainAddress = async (id) => {
   return mainAddress;
 };
 
+export const getAddress = async (id) => {
+  const data = await Address.findOne({
+    where: {
+      id: id,
+      deletedAt: null
+    },
+  });
+  return data;
+};
+
 export const updateAddress = async (userID, id, obj) => {
   const address = await getAddressbyUserId(userID);
   if (obj.status) {
