@@ -70,6 +70,32 @@ export const categoriesUpdate = async (req, res) => {
     });
   }
 
+  const column = Object.keys(exist.dataValues);
+  const elements = Object.keys(data);
+  existence: for (const item of elements) {
+    for (const col of column) {
+      if (item == col) {
+        if (typeof item == typeof col) {
+          console.log(item + " exist");
+          continue existence;
+        } else {
+          return res.status(400).json({
+            meta: {
+              code: 400,
+              error: "wrong data type of : " + item,
+            },
+          });
+        }
+      }
+    }
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "column '" + item + "' doesn't exist",
+      },
+    });
+  }
+
   const respModel = await updateCategories(id, data);
   return res.status(200).json({
     meta: {
