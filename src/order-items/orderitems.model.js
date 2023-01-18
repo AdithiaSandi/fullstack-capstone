@@ -61,13 +61,21 @@ export const getItemsbyOrderId = async (id) => {
   return allItems;
 };
 
+export const getItemsbyId = async (id) => {
+  const exist = await OrdersItems.findOne({
+    where: {
+      id: id
+    }
+  })
+  return exist
+}
+
 export const updateItems = async (id, obj) => {
   const update = await OrdersItems.update(obj, {
     where: {
       id: id,
     },
   });
-  console.log(update);
   return update;
 };
 
@@ -77,7 +85,6 @@ export const deleteItems = async (id) => {
       id: id,
     },
   });
-  console.log(deleted);
   return deleted;
 };
 
