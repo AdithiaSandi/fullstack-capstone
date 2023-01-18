@@ -6,6 +6,7 @@ import {
   getOrdersbyId,
   getOrdersbyUserId,
   getOrdersDistance,
+  getOrdersExist,
   updateOrders,
 } from "./order.model.js";
 import { createItems } from "../order-items/orderitems.model.js";
@@ -18,7 +19,7 @@ export const ordersAdd = async (req, res) => {
     return res.status(400).json({
       meta: {
         code: 400,
-        message: "missing input",
+        message: "missing input(s) or element(s)",
       },
     });
   }
@@ -27,10 +28,21 @@ export const ordersAdd = async (req, res) => {
   const bearer = jwt.split(" ");
   const token = bearer[1];
   const decode = JSONtoken.verify(token, process.env.JWT_SECRET);
+  const id = decode.id;
 
-  const respModel = await createOrder(decode.id, type, status, total, items);
+  const respModel = await createOrder(id, type, status, total);
 
   const load = [];
+
+  if (items.length == 0) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "missing order items",
+      },
+    });
+  }
+
   for (const item of items) {
     const entry = await createItems(respModel.id, item);
     load.push(entry);
@@ -74,6 +86,16 @@ export const ordersGetAll = async (req, res) => {
 export const ordersGet = async (req, res) => {
   const id = req.body.id;
 
+  const exist = await getOrdersExist(id);
+  if (exist == null) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "order doesn't exist",
+      },
+    });
+  }
+
   const respModel = await getOrdersbyId(id);
 
   return res.status(200).json({
@@ -106,6 +128,16 @@ export const ordersUpdate = async (req, res) => {
 export const ordersDelete = async (req, res) => {
   const id = req.body.id;
 
+  const exist = await getOrdersExist(id);
+  if (exist == null) {
+    return res.status(400).json({
+      meta: {
+        code: 400,
+        error: "order doesn't exist",
+      },
+    });
+  }
+
   const respModel = await deleteOrders(id);
   return res.status(200).json({
     meta: {
@@ -115,7 +147,6 @@ export const ordersDelete = async (req, res) => {
     data: respModel,
   });
 };
-
 
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// 3RD PARTY INTEGRATION /////////////////////////////////

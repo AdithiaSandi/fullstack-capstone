@@ -59,7 +59,7 @@ export const createOrder = async (userID, ty, sta, tot) => {
 };
 
 export const getOrdersbyUserId = async (userID) => {
-  const allOrders = await Orders.findOne({
+  const allOrders = await Orders.findAll({
     attributes: {
       exclude: ["createdAt", "updatedAt", "deletedAt"],
     },
@@ -68,6 +68,19 @@ export const getOrdersbyUserId = async (userID) => {
     },
   });
   return allOrders;
+};
+
+export const getOrdersExist = async (id) => {
+  const order = await Orders.findOne({
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "deletedAt"],
+    },
+    where: {
+      id: id,
+    },
+  });
+
+  return order;
 };
 
 export const getOrdersbyId = async (id) => {
