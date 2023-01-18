@@ -77,27 +77,6 @@ export const getUserbyUsername = async (un) => {
 
 export const updateUser = async (id, obj) => {
   let update;
-  const user = await getUserbyId(id);
-  const userData = Object.keys(user.dataValues);
-
-  const data = Object.keys(obj);
-  existence: for (const item of data) {
-    for (const col of userData) {
-      if (item == col) {
-        if (typeof item == typeof col) {
-          console.log(item + " exist");
-          continue existence;
-        } else {
-          return {
-            error: "wrong data type of : " + item,
-          };
-        }
-      }
-    }
-    return {
-      error: "column '" + item + "' doesn't exist",
-    };
-  }
 
   await Users.update(obj, {
     where: {
