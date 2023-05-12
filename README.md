@@ -6,4 +6,4 @@
 
 Swagger [here](https://app.swaggerhub.com/apis/AdithiaSandi/Thrive-Capstone/1.0.0#/)
 
-![ERD of flow "client sell junk"](src\assets\fullstack-capstone.drawio.png "ERD of flow client sell junk")
+![ERD of flow "client sell junk"](src/assets/fullstack-capstone.drawio.png "ERD of flow client sell junk")
